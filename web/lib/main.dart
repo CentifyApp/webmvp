@@ -41,22 +41,29 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text("Centify"),
       ),
       body: Center(
-        child: Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return oneVsOne();
-                  }));
-                },
-                child: const Text("1v1")),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return twoVsTwo();
-                  }));
-                },
-                child: const Text("2v2")),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return oneVsOne();
+                      }));
+                    },
+                    child: const Text("1v1")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return twoVsTwo();
+                      }));
+                    },
+                    child: const Text("2v2")),
+              ],
+            ),
           ],
         ),
       ),

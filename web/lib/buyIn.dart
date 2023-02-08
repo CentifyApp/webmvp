@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/ingame.dart';
 import 'package:web/models/playerInfo.dart';
 
 /*TODO: 
@@ -55,14 +56,23 @@ class buyInState extends State<buyIn> {
           ElevatedButton(
             onPressed: () {
               int i = 0;
-              while (i < players.length && players[i].ready) {
-                i++;
-              }
 
-              if (i == players.length) {
-                print("go to next page");
+              for (var player in players) {
+                if (!player.ready) {
+                  i++;
+                }
+              }
+              if (i != 0) {
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                          title: Text('Players are not ready!'),
+                          content: Text('Check if all player has venmoed'),
+                        ));
               } else {
-                print("nope");
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return inGame(playerInfo: players);
+                }));
               }
             },
             child: Text("Start"),

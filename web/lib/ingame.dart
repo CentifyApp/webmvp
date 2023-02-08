@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/choosewinner.dart';
 
 class inGame extends StatelessWidget {
   final List playerInfo;
@@ -6,6 +7,21 @@ class inGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: const Color(0xFF2DBD3A));
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Centify"),
+        ),
+        body: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () => {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return chooseWinner(playerInfo: playerInfo);
+                      }))
+                    },
+                child: Text("Finish"))
+          ],
+        ));
   }
 }

@@ -49,9 +49,10 @@ class buyInState extends State<buyIn> {
             children: ready,
           ),
           Spacer(),
-          const Image(
-              image: NetworkImage(
-                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg')),
+          Image.asset(
+            'assets/venmo.jpg',
+            width: 500,
+          ),
           Spacer(),
           ElevatedButton(
             onPressed: () {

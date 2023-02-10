@@ -1,8 +1,13 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'buyIn.dart';
 import 'models/playerInfo.dart';
+import 'ingame.dart';
+
+/*TODO:
+- fixed exception issue for formating
+- now the color of the button doesn't change back
+*/
 
 class oneVsOne extends StatefulWidget {
   const oneVsOne({Key? key}) : super(key: key);
@@ -24,6 +29,8 @@ class oneVsOneState extends State<oneVsOne> {
   TextEditingController p1Venmo = TextEditingController();
   TextEditingController p2Name = TextEditingController();
   TextEditingController p2Venmo = TextEditingController();
+  TextEditingController p1bet = TextEditingController();
+  TextEditingController p2bet = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +70,46 @@ class oneVsOneState extends State<oneVsOne> {
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.substring(0, 1) != '@') {
+                        !value.contains('@')) {
                       return 'Please enter your venmo address with @';
                     }
                     return null;
                   },
                 )),
+                Flexible(
+                    child: TextFormField(
+                  controller: p1bet,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.monetization_on),
+                    hintText: 'How much do you want to bet?',
+                    labelText: 'Bet dollar amount *',
+                  ),
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.contains('.') ||
+                        !RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
+                      return 'Numbers only';
+                    }
+                    return null;
+                  },
+                )),
                 ElevatedButton(
-                    onPressed: () {
-                      players[0] =
-                          Player(name: p1Name.text, venmo: p1Venmo.text);
-                    },
-                    child: Text("Confirm"))
+                    onPressed: () => setState(() {
+                          players[0] =
+                              Player(name: p1Name.text, venmo: p1Venmo.text);
+                          if (RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
+                            players[0].bet = num.parse(p1bet.text);
+                          }
+                          players[0].ready = !players[0].ready;
+
+                          print(players[0].bet);
+                        }),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            players[0].ready ? Colors.green : Colors.purple)),
+                    child: Text(players[0].name + " ready")),
               ],
             ),
             Row(
@@ -110,26 +145,70 @@ class oneVsOneState extends State<oneVsOne> {
                     return null;
                   },
                 )),
+                Flexible(
+                    child: TextFormField(
+                  controller: p2bet,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.monetization_on),
+                    hintText: 'How much do you want to bet?',
+                    labelText: 'Bet dollar amount *',
+                  ),
+                  validator: (String? value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.contains('.') ||
+                        !RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
+                )),
                 ElevatedButton(
-                    onPressed: () {
-                      players[1] =
-                          Player(name: p2Name.text, venmo: p2Venmo.text);
-                    },
-                    child: Text("Confirm"))
+                    onPressed: () => setState(() {
+                          players[1] =
+                              Player(name: p2Name.text, venmo: p2Venmo.text);
+                          if (RegExp(r'^[0-9]+$').hasMatch(p2bet.text)) {
+                            players[1].bet = num.parse(p2bet.text);
+                          }
+                          players[1].ready = !players[1].ready;
+                        }),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            players[1].ready ? Colors.green : Colors.purple)),
+                    child: Text(players[1].name + " ready")),
               ],
             ),
             Spacer(),
+            Image.asset(
+              'assets/venmo.jpg',
+              width: 300,
+            ),
+            Spacer(),
             ElevatedButton(
-                onPressed: () => {
-                      if (_formKey.currentState!.validate())
-                        {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return buyIn(playerInfo: players);
-                          }))
-                        }
-                    },
-                child: const Text("Next"))
+                onPressed: () {
+                  int i = 0;
+
+                  for (int k = 0; k < players.length; k++) {
+                    if (!players[k].ready) {
+                      i++;
+                    }
+                  }
+                  if (i != 0) {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text('Players are not ready!'),
+                              content: Text('Check if all player has venmoed'),
+                            ));
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return inGame(playerInfo: players);
+                    }));
+                  }
+                },
+                child: const Text("Start Game"))
           ],
         ),
       ),

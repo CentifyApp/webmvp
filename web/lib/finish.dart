@@ -11,27 +11,23 @@ class finish extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Centify"),
-        ),
         body: Column(
-          children: [
-            Text(winner.name +
-                " has won \$" +
-                pot.toString() +
-                ", your rewards will arrive shortly"),
-            Spacer(),
-            ElevatedButton(
-                onPressed: () => {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return MyHomePage(
-                          title: 'Home Page',
-                        );
-                      }))
-                    },
-                child: Text("Finish"))
-          ],
-        ));
+      children: [
+        Text(winner.name +
+            " has won \$" +
+            pot.toString() +
+            ", your rewards will arrive shortly"),
+        Spacer(),
+        ElevatedButton(
+            onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return MyHomePage(
+                      title: 'Home Page',
+                    );
+                  }))
+                },
+            child: Text("Finish"))
+      ],
+    ));
   }
 }

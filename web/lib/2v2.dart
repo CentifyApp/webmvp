@@ -16,10 +16,10 @@ class twoVsTwo extends StatefulWidget {
 class twoVsTwoState extends State<twoVsTwo> {
   final _formKey = GlobalKey<FormState>();
   List<Player> players = [
-    Player(name: "p1", venmo: "venmo"),
-    Player(name: "p2", venmo: "venmo"),
-    Player(name: "p3", venmo: "venmo"),
-    Player(name: "p4", venmo: "venmo")
+    Player(name: "p1", venmo: "venmo", ready: false),
+    Player(name: "p2", venmo: "venmo", ready: false),
+    Player(name: "p3", venmo: "venmo", ready: false),
+    Player(name: "p4", venmo: "venmo", ready: false)
   ];
 
   TextEditingController p1Name = TextEditingController();
@@ -38,13 +38,10 @@ class twoVsTwoState extends State<twoVsTwo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Centify"),
-      ),
       body: Form(
         key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Row(
               children: [
@@ -97,10 +94,12 @@ class twoVsTwoState extends State<twoVsTwo> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[0] =
-                              Player(name: p1Name.text, venmo: p1Venmo.text);
-                          players[0].bet = num.parse(p1bet.text);
+                          players[0].name = p1Name.text;
+                          players[0].venmo = p1Venmo.text;
                           players[0].ready = !players[0].ready;
+                          if (RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
+                            players[0].bet = num.parse(p1bet.text);
+                          }
 
                           print(players[0].bet);
                         }),
@@ -161,10 +160,12 @@ class twoVsTwoState extends State<twoVsTwo> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[1] =
-                              Player(name: p2Name.text, venmo: p2Venmo.text);
-                          players[1].bet = num.parse(p2bet.text);
+                          players[1].name = p2Name.text;
+                          players[1].venmo = p2Venmo.text;
                           players[1].ready = !players[1].ready;
+                          if (RegExp(r'^[0-9]+$').hasMatch(p2bet.text)) {
+                            players[1].bet = num.parse(p2bet.text);
+                          }
                         }),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -223,10 +224,12 @@ class twoVsTwoState extends State<twoVsTwo> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[2] =
-                              Player(name: p3Name.text, venmo: p3Venmo.text);
-                          players[2].bet = num.parse(p3bet.text);
+                          players[2].name = p3Name.text;
+                          players[2].venmo = p3Venmo.text;
                           players[2].ready = !players[2].ready;
+                          if (RegExp(r'^[0-9]+$').hasMatch(p3bet.text)) {
+                            players[2].bet = num.parse(p3bet.text);
+                          }
                         }),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -285,10 +288,12 @@ class twoVsTwoState extends State<twoVsTwo> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[3] =
-                              Player(name: p4Name.text, venmo: p4Venmo.text);
-                          players[3].bet = num.parse(p4bet.text);
+                          players[3].name = p4Name.text;
+                          players[3].venmo = p4Venmo.text;
                           players[3].ready = !players[3].ready;
+                          if (RegExp(r'^[0-9]+$').hasMatch(p4bet.text)) {
+                            players[3].bet = num.parse(p4bet.text);
+                          }
                         }),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -321,7 +326,7 @@ class twoVsTwoState extends State<twoVsTwo> {
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return inGame(playerInfo: players);
+                      return inGame();
                     }));
                   }
                 },

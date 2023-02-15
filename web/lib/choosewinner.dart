@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web/finish.dart';
 import 'package:web/models/playerInfo.dart';
-import 'utils/sendemail.dart';
+import 'utils/functions.dart';
 
 class chooseWinner extends StatefulWidget {
   final List playerInfo;
@@ -55,43 +55,40 @@ class chooseWinnerState extends State<chooseWinner> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Centify"),
-        ),
         body: Column(
-          children: [
-            Row(children: winlose),
-            ElevatedButton(
-                onPressed: () {
-                  int i = 0;
-                  for (var player in players) {
-                    pot += player.bet;
-                    if (player.isWinner) {
-                      i++;
-                    }
-                  }
+      children: [
+        Row(children: winlose),
+        ElevatedButton(
+            onPressed: () {
+              int i = 0;
+              for (var player in players) {
+                pot += player.bet;
+                if (player.isWinner) {
+                  i++;
+                }
+              }
 
-                  if (i == 1) {
-                    for (var player in players) {
-                      if (player.isWinner) {
-                        sendEmail(player, pot.toString());
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return finish(winner: player, pot: pot);
-                        }));
-                      }
-                    }
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              title: Text('There can only be one winner'),
-                              content: Text('Check with your friends!'),
-                            ));
+              if (i == 1) {
+                for (var player in players) {
+                  if (player.isWinner) {
+                    sendEmail(player, pot.toString());
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return finish(winner: player, pot: pot);
+                    }));
                   }
-                },
-                child: Text("Confirm"))
-          ],
-        ));
+                }
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                          title: Text('There can only be one winner'),
+                          content: Text('Check with your friends!'),
+                        ));
+              }
+            },
+            child: Text("Confirm"))
+      ],
+    ));
   }
 }

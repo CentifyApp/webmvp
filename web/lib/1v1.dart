@@ -1,13 +1,6 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'models/playerInfo.dart';
 import 'ingame.dart';
-
-/*TODO:
-- fixed exception issue for formating
-- now the color of the button doesn't change back
-*/
 
 class oneVsOne extends StatefulWidget {
   const oneVsOne({Key? key}) : super(key: key);
@@ -21,8 +14,8 @@ class oneVsOne extends StatefulWidget {
 class oneVsOneState extends State<oneVsOne> {
   final _formKey = GlobalKey<FormState>();
   List<Player> players = [
-    Player(name: "p1", venmo: "venmo"),
-    Player(name: "p2", venmo: "venmo")
+    Player(name: "p1", venmo: "venmo", ready: false),
+    Player(name: "p2", venmo: "venmo", ready: false)
   ];
 
   TextEditingController p1Name = TextEditingController();
@@ -35,15 +28,13 @@ class oneVsOneState extends State<oneVsOne> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Centify"),
-      ),
       body: Form(
         key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text("Player 1"),
                 Flexible(
@@ -79,10 +70,9 @@ class oneVsOneState extends State<oneVsOne> {
                 Flexible(
                     child: TextFormField(
                   controller: p1bet,
-                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.monetization_on),
-                    hintText: 'How much do you want to bet?',
+                    border: OutlineInputBorder(),
                     labelText: 'Bet dollar amount *',
                   ),
                   validator: (value) {
@@ -97,14 +87,13 @@ class oneVsOneState extends State<oneVsOne> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[0] =
-                              Player(name: p1Name.text, venmo: p1Venmo.text);
+                          players[0].name = p1Name.text;
+                          players[0].venmo = p1Venmo.text;
+                          players[0].ready = !(players[0].ready);
                           if (RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
                             players[0].bet = num.parse(p1bet.text);
                           }
-                          players[0].ready = !players[0].ready;
-
-                          print(players[0].bet);
+                          print(players[0].ready);
                         }),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -113,6 +102,7 @@ class oneVsOneState extends State<oneVsOne> {
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text("Player 2"),
                 Flexible(
@@ -148,17 +138,16 @@ class oneVsOneState extends State<oneVsOne> {
                 Flexible(
                     child: TextFormField(
                   controller: p2bet,
-                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.monetization_on),
-                    hintText: 'How much do you want to bet?',
+                    border: OutlineInputBorder(),
                     labelText: 'Bet dollar amount *',
                   ),
                   validator: (String? value) {
                     if (value == null ||
                         value.isEmpty ||
                         value.contains('.') ||
-                        !RegExp(r'^[0-9]+$').hasMatch(p1bet.text)) {
+                        !RegExp(r'^[0-9]+$').hasMatch(p2bet.text)) {
                       return 'Please enter your name';
                     }
                     return null;
@@ -166,12 +155,13 @@ class oneVsOneState extends State<oneVsOne> {
                 )),
                 ElevatedButton(
                     onPressed: () => setState(() {
-                          players[1] =
-                              Player(name: p2Name.text, venmo: p2Venmo.text);
+                          players[1].name = p2Name.text;
+                          players[1].venmo = p2Venmo.text;
+                          players[1].ready = !players[1].ready;
                           if (RegExp(r'^[0-9]+$').hasMatch(p2bet.text)) {
                             players[1].bet = num.parse(p2bet.text);
                           }
-                          players[1].ready = !players[1].ready;
+                          print(players[1].ready);
                         }),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -179,18 +169,22 @@ class oneVsOneState extends State<oneVsOne> {
                     child: Text(players[1].name + " ready")),
               ],
             ),
-            Spacer(),
-            Image.asset(
-              'assets/venmo.jpg',
-              width: 300,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("Venmo your bets then click ready"),
+                Image.asset(
+                  'assets/venmo.jpg',
+                  width: 300,
+                ),
+              ],
             ),
-            Spacer(),
             ElevatedButton(
                 onPressed: () {
                   int i = 0;
 
                   for (int k = 0; k < players.length; k++) {
-                    if (!players[k].ready) {
+                    if (!players[k].ready || (players[k].venmo == "venmo")) {
                       i++;
                     }
                   }
@@ -204,7 +198,7 @@ class oneVsOneState extends State<oneVsOne> {
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return inGame(playerInfo: players);
+                      return inGame();
                     }));
                   }
                 },

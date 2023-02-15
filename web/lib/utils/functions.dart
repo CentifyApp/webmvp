@@ -1,5 +1,18 @@
 import 'package:emailjs/emailjs.dart';
 import 'package:web/models/playerInfo.dart';
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+void nextPage(BuildContext context, Widget page) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return page;
+  }));
+}
+
+String generateLobbyCode() {
+  var code = Random().nextInt(990) + 100;
+  return code.toString();
+}
 
 void sendEmail(Player winner, String pot) async {
   try {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:web/ingame.dart';
 import 'package:web/enterParty.dart';
 import 'package:web/models/playerInfo.dart';
 import 'package:web/models/UIelements.dart';

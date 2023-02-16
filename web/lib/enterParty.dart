@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web/betAmt.dart';
-import 'package:web/ingame.dart';
 import 'package:web/models/UIelements.dart';
+import 'package:web/utils/firebase.dart';
 import 'models/playerInfo.dart';
 import 'package:web/utils/functions.dart';
 
@@ -25,6 +25,7 @@ class makeLobby extends StatelessWidget {
                 "Create Party",
                 () => {
                       player1.partyCode = generateLobbyCode(),
+                      addUser(player1),
                       nextPage(context, betLobby(player: player1))
                     }),
             Text("Or"),
@@ -52,6 +53,7 @@ class makeLobby extends StatelessWidget {
                             else
                               {
                                 player1.partyCode = lobbyCodeController.text,
+                                addUser(player1),
                                 nextPage(context, betLobby(player: player1)),
                               }
                           })

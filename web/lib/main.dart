@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:web/1v1.dart';
-// import 'package:web/2v2.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:web/firebase_options.dart';
 import 'package:web/models/UIelements.dart';
 import 'package:web/startupFiles/name.dart';
-
-/*TODO:
-- add background to all pages
-- find out which widget is repeatedly used, call the model class to cut down code
-- get ride of ingame?
-*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

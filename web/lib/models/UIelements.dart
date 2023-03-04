@@ -22,7 +22,11 @@ Widget smallButton(BuildContext context, String text, Function()? onPress) {
         onPressed: onPress,
         child: FittedBox(
             fit: BoxFit.fitWidth,
-            child: Text(text, style: Theme.of(context).textTheme.bodySmall))),
+            child: Row(
+              children: [
+                Text(text, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ))),
   );
 }
 
@@ -51,4 +55,17 @@ ThemeData themeData() {
           bodyMedium: TextStyle(fontSize: 24),
           bodyLarge: TextStyle(fontSize: 28, color: Colors.white))),
       scaffoldBackgroundColor: Color.fromARGB(255, 248, 187, 249));
+}
+
+Container theContainer(BuildContext context, Widget child) {
+  return Container(
+    alignment: Alignment.center,
+    padding: EdgeInsets.all(50),
+    height: MediaQuery.of(context).size.height,
+    width: MediaQuery.of(context).size.width,
+    decoration: BoxDecoration(
+        gradient:
+            LinearGradient(colors: [Colors.orangeAccent, Colors.purpleAccent])),
+    child: child,
+  );
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:web/betAmt.dart';
+// import 'package:web/enterParty.dart';
 import 'package:web/firebase_options.dart';
 import 'package:web/models/UIelements.dart';
 import 'package:web/startupFiles/name.dart';
+import 'package:web/utils/functions.dart';
+import 'package:web/utils/firebase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,29 +39,55 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  TextEditingController lobbyCodeController = TextEditingController();
+  var partyCode = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        padding: EdgeInsets.all(50),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Text("Play with Centify and bet on your games"),
-            bigButton(
-                context,
-                "Play Now",
-                () => {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return namePage();
-                      }))
-                    })
-          ],
+        appBar: AppBar(
+          title: Text("Bet on your own games"),
         ),
-      ),
-    );
+        body: theContainer(
+          context,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text("Enter Party Code"),
+              formFieldText("Party PIN", lobbyCodeController),
+              smallButton(
+                  context,
+                  "Enter",
+                  () => {
+                        if (lobbyCodeController.text == null ||
+                            lobbyCodeController.text.isEmpty)
+                          {
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text('Please complete field'),
+                                      content:
+                                          Text('Party PIN is not complete'),
+                                    ))
+                          }
+                        else
+                          {
+                            partyCode = lobbyCodeController.text,
+                            nextPage(context, namePage(partyCode: partyCode)),
+                          }
+                      })
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => {
+            partyCode = generateLobbyCode(),
+            createLobby(partyCode),
+            nextPage(context, namePage(partyCode: partyCode))
+          },
+          label: const Text("Create New Party"),
+          icon: const Icon(Icons.add),
+          backgroundColor: Colors.orangeAccent,
+        ));
   }
 }

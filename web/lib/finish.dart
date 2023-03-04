@@ -30,7 +30,7 @@ class finishState extends State<finish> {
   void initState() {
     if (widget.winner) {
       widget.player.isWinner = true;
-      addUser(widget.player);
+      // addUser(widget.player);
       getPot(widget.player);
     }
 

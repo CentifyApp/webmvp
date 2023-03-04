@@ -41,7 +41,7 @@ class venmoPage extends StatelessWidget {
                           else
                             {
                               player.venmo = venmoController.text,
-                              addUser(player),
+                              // addUser(player),
                               nextPage(context, makeLobby(player1: player))
                             }
                         })

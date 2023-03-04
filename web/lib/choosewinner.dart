@@ -42,7 +42,7 @@ class chooseWinnerState extends State<chooseWinner> {
                     "Yes",
                     () => {
                           p.isWinner = true,
-                          addUser(p),
+                          // addUser(p),
                           nextPage(context, finish(winner: true, player: p))
                         }),
                 smallButton(
@@ -50,7 +50,7 @@ class chooseWinnerState extends State<chooseWinner> {
                     "No",
                     () => {
                           p.isWinner = false,
-                          addUser(p),
+                          // addUser(p),
                           nextPage(context, finish(winner: false, player: p))
                         })
               ],

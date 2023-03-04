@@ -25,8 +25,8 @@ class makeLobby extends StatelessWidget {
                 "Create Party",
                 () => {
                       player1.partyCode = generateLobbyCode(),
-                      addUser(player1),
-                      nextPage(context, betLobby(player: player1))
+                      // addUser(player1),
+                      // nextPage(context, betLobby(player: player1))
                     }),
             Text("Or"),
             Container(
@@ -53,8 +53,8 @@ class makeLobby extends StatelessWidget {
                             else
                               {
                                 player1.partyCode = lobbyCodeController.text,
-                                addUser(player1),
-                                nextPage(context, betLobby(player: player1)),
+                                // addUser(player1),
+                                // nextPage(context, betLobby(player: player1)),
                               }
                           })
                 ],

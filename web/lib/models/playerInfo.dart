@@ -1,4 +1,5 @@
 import 'package:http/http.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Player {
   Player(
@@ -14,6 +15,7 @@ class Player {
   String partyCode;
   bool ready, isWinner;
   num bet;
+  String useruid = "";
 
   Map<String, dynamic> toJSON() {
     return {

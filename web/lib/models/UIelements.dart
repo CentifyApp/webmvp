@@ -30,6 +30,19 @@ Widget smallButton(BuildContext context, String text, Function()? onPress) {
   );
 }
 
+Widget bigIconButton(
+    BuildContext context, String text, Icon icon, Function()? onPress) {
+  return SizedBox(
+    width: 300,
+    height: 50,
+    child: ElevatedButton.icon(
+      onPressed: onPress,
+      icon: icon,
+      label: Text(text, style: Theme.of(context).textTheme.bodySmall),
+    ),
+  );
+}
+
 Widget formFieldText(String label, TextEditingController controller) {
   return SizedBox(
       width: 500,

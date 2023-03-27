@@ -41,8 +41,7 @@ class namePage extends StatelessWidget {
                           {
                             p.name = playerName.text,
                             addUser(p, partyCode),
-                            nextPage(context,
-                                betLobby(partyCode: partyCode, player: p))
+                            nextPage(context, betLobby(partyCode: partyCode))
                           }
                       })
             ])));

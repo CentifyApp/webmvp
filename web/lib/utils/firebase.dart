@@ -6,8 +6,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:web/models/UIelements.dart';
 import 'package:web/models/playerInfo.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_web/google_sign_in_web.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+
+Future<void> makePayment() async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  DocumentReference docRef = await db
+      .collection('customers')
+      .doc("1ZVB1YqfOLRe12cweDzBiLpv4PH2") //hardcoded for now
+      .collection("checkout_sessions")
+      .add({
+    "mode": "payment",
+    "price":
+        "price_1MiyGVFrHOOVbovuzoOZaQmV", // One-time price created in Stripe
+    "success_url": "http://localhost:5000/", // hardcoded for now
+    "cancel_url":
+        "http://localhost:5000/", // figure out pop up tab for payment,
+  });
+}
 
 Future<void> addUser(Player p, String partyCode) async {
   CollectionReference partyPlayers = FirebaseFirestore.instance
@@ -52,16 +71,43 @@ void removePlayer(Player p) {
   users.doc(p.name).delete();
 }
 
-// Future<bool> checkPartyExists(String partyCode) async {
-//   var lobby = FirebaseFirestore.instance.collection('lobbies').doc(partyCode);
-//   var doc = await lobby.get();
-//   bool exists = false;
-//   if (doc.exists) {
-//     exists = true;
-//     print("true");
-//   }
-//   return exists;
-// }
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  // Optional clientId
+  clientId:
+      '270397286111-ubpfahhaoctnaieo2eehdf3ragm9qf64.apps.googleusercontent.com',
+  scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
+
+Future<UserCredential> GoogleSignUp(BuildContext context) async {
+  // Trigger the authentication flow
+  _signInSilently();
+
+  final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+  // Obtain the auth details from the request
+  final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
+
+  // Create a new credential
+  final credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth?.accessToken,
+    idToken: googleAuth?.idToken,
+  );
+
+  // Once signed in, return the UserCredential
+  return await FirebaseAuth.instance.signInWithCredential(credential);
+}
+
+void _signInSilently() {
+  _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+    print("user changed");
+  });
+
+  _googleSignIn.signInSilently();
+}
 
 Widget returnLobby(BuildContext context, String partyCode) {
   return StreamBuilder(
@@ -147,8 +193,6 @@ Widget checkCompleteVenmo(BuildContext context, Player player) {
       }));
 }
 
-
-
 // bool lobbyExists(String partyCode) async {
 //   CollectionReference users = FirebaseFirestore.instance.collection('users');
 //   var doc = users.where('partyCode', arrayContains: partyCode);
@@ -190,4 +234,3 @@ Widget checkCompleteVenmo(BuildContext context, Player player) {
 //         );
 //       }));
 // }
-

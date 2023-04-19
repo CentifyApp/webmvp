@@ -2,28 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:web/firebase_options.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:web/models/UIelements.dart';
 import 'package:web/startupFiles/name.dart';
 import 'package:web/utils/functions.dart';
 import 'package:web/utils/firebase.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:web/error.dart';
 import 'package:firebase_auth_web/firebase_auth_web.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:web/models/playerInfo.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show json;
+import 'globals.dart' as globals;
 import 'package:web/betAmt.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-
-// GoogleSignIn _googleSignIn = GoogleSignIn(
-//   // Optional clientId
-//   // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
-//   scopes: <String>[
-//     'email',
-//     'https://www.googleapis.com/auth/contacts.readonly',
-//   ],
-// );
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +25,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  usePathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -43,20 +36,37 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Centify',
       theme: themeData(),
-      home: const MyHomePage(title: 'Home Page'),
-      // initialRoute: '/home',
-      // routes: {
-      //   '/home': (context) => const MyHomePage(title: 'Home Page'),
-      //   '/party': (context) => betLobby(),
-      // }
+      home: const MyHomePage(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/') {
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => MyHomePage());
+        }
+        if (settings.name == '/name') {
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => namePage());
+        }
+        var uri = Uri.parse(settings.name!);
+        if (uri.pathSegments.length == 2 && uri.pathSegments.first == 'lobby') {
+          print('working');
+          var arg = uri.pathSegments[1];
+          // var id = arg.split('_')[0];
+          // var name = arg.split('_')[1];
+
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (context) => betLobby(
+                  arg: arg)); //lets try if globals keeps value after refresh
+        }
+        return MaterialPageRoute(
+            settings: settings, builder: (context) => UnknownScreen());
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -66,20 +76,20 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController lobbyCodeController = TextEditingController();
   UserCredential? _currentUser;
   FirebaseAuth auth = FirebaseAuth.instance;
-  Player p = new Player(name: "", venmo: "");
+  Player p = globals.player;
   User? user;
   String _contactText = '';
   var partyCode = "";
 
-  @override
-  void initState() {
-    super.initState();
-    // GoogleAuthProvider googleProvider = GoogleAuthProvider();
-    // googleProvider
-    //     .addScope('https://www.googleapis.com/auth/contacts.readonly');
-    // googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
-    // _googleSignIn.signInSilently();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // GoogleAuthProvider googleProvider = GoogleAuthProvider();
+  //   // googleProvider
+  //   //     .addScope('https://www.googleapis.com/auth/contacts.readonly');
+  //   // googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+  //   // _googleSignIn.signInSilently();
+  // }
 
   Future<UserCredential> signInWithGoogle() async {
     GoogleAuthProvider googleProvider = GoogleAuthProvider();
@@ -117,21 +127,23 @@ class _MyHomePageState extends State<MyHomePage> {
                           ));
                 } else {
                   _currentUser = await signInWithGoogle();
-                  partyCode = lobbyCodeController.text;
-                  p.useruid = _currentUser!.user!.uid;
-                  // Navigator.of(context).pushNamed('/party',
-                  //     arguments: betLobby(partyCode: partyCode));
-                  nextPage(context, namePage(partyCode: partyCode));
+                  globals.player.partyCode = lobbyCodeController.text;
+                  globals.player.useruid = _currentUser!.user!.uid;
+                  Navigator.pushNamed(context, '/name');
                 }
               })
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => {
-            partyCode = generateLobbyCode(),
-            createLobby(partyCode),
-            nextPage(context, namePage(partyCode: partyCode))
+          onPressed: () async {
+            _currentUser = await signInWithGoogle();
+            partyCode = generateLobbyCode();
+            createLobby(partyCode);
+            globals.player.partyCode = partyCode;
+            globals.player.useruid = _currentUser!.user!.uid;
+            print(globals.player.useruid);
+            Navigator.pushNamed(context, '/name');
           },
           label: const Text("Create New Party"),
           icon: const Icon(Icons.add),

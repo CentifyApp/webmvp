@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:html';
 import 'package:web/choosewinner.dart';
 import 'package:web/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,29 +9,40 @@ import 'package:web/models/playerInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_web/google_sign_in_web.dart';
+import 'package:web/globals.dart' as globals;
+import 'dart:html' as html;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
-Future<void> makePayment() async {
+// Widget launchCheckout(String uid){
+//   FirebaseFirestore db = FirebaseFirestore.instance;
+//   return StreamBuilder(stream: db
+//       .collection('customers')
+//       .doc(uid) //hardcoded for now, need to get uid
+//       .collection("checkout_sessions"),)
+// }
+
+Future<String> makePayment(String uid, int betAmt) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   DocumentReference docRef = await db
       .collection('customers')
-      .doc("1ZVB1YqfOLRe12cweDzBiLpv4PH2") //hardcoded for now
+      .doc(uid) //hardcoded for now, need to get uid
       .collection("checkout_sessions")
       .add({
     "mode": "payment",
-    "price":
-        "price_1MiyGVFrHOOVbovuzoOZaQmV", // One-time price created in Stripe
-    "success_url": "http://localhost:5000/", // hardcoded for now
+    "price": globals.prices[betAmt],
+    "success_url":
+        "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}",
     "cancel_url":
-        "http://localhost:5000/", // figure out pop up tab for payment,
+        "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}" // One-time price created in Stripe // figure out pop up tab for payment,
   });
+  return docRef.id;
 }
 
-Future<void> addUser(Player p, String partyCode) async {
+Future<void> addUser(Player p) async {
   CollectionReference partyPlayers = FirebaseFirestore.instance
       .collection('parties')
-      .doc(partyCode)
+      .doc(p.partyCode)
       .collection("players");
   partyPlayers
       .doc(p.name)
@@ -52,18 +63,6 @@ void setBetAmt(String betAmount, String partyCode) {
   CollectionReference lobbies =
       FirebaseFirestore.instance.collection("parties");
   lobbies.doc(partyCode).update({"betAmount": betnum});
-}
-
-void getPot(Player p) {
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
-  num pot = 0;
-  String out = "";
-
-  users.where('partyCode', isEqualTo: p.partyCode).get().then((value) => {
-        for (var doc in value.docs) {pot += doc.get('bet')},
-        sendEmail(p, pot.toString()),
-        out = pot.toString()
-      });
 }
 
 void removePlayer(Player p) {
@@ -109,7 +108,77 @@ void _signInSilently() {
   _googleSignIn.signInSilently();
 }
 
-Widget returnLobby(BuildContext context, String partyCode) {
+Future<String> getUid(String partyCode, String name) async {
+  String uid = '';
+
+  await FirebaseFirestore.instance
+      .collection('parties')
+      .doc(partyCode)
+      .collection('players')
+      .doc(name)
+      .get()
+      .then((DocumentSnapshot docsnap) {
+    if (docsnap.exists) {
+      uid = docsnap.get('useruid');
+    }
+  });
+
+  return uid;
+}
+
+Future<void> setGlobalPlayer(String partyCode, String name) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  await db
+      .collection('parties')
+      .doc(partyCode)
+      .collection('players')
+      .doc(name)
+      .get()
+      .then((DocumentSnapshot docsnap) {
+    if (docsnap.exists) {
+      globals.player = Player.fromJSON(docsnap.data() as Map<String, dynamic>);
+    }
+  });
+}
+
+Future<void> deletePayment(String partyCode, String name) async {
+  String uid = await getUid(partyCode, name);
+  await FirebaseFirestore.instance
+      .collection('customers')
+      .doc(uid)
+      .collection('payments')
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      doc.reference.delete();
+    });
+  });
+  print('${uid} deleted');
+}
+
+Future<Widget> returnLobby(
+    BuildContext context, String partyCode, String name) async {
+  await setGlobalPlayer(partyCode, name);
+  String uid = globals.player.useruid;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  await db
+      .collection('customers')
+      .doc(uid)
+      .collection('payments')
+      .snapshots()
+      .listen((querySnapshot) {
+    querySnapshot.docChanges.forEach((element) async {
+      if (element.doc.data()!['status'] == 'succeeded' &&
+          globals.player.bet == 0) {
+        print(element.doc.data());
+        globals.player.bet = element.doc.data()!['amount_received'] / 100;
+        globals.player.ready = true;
+        await addUser(globals.player);
+        await deletePayment(globals.player.partyCode, globals.player.name);
+      }
+    });
+  });
+
   return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('parties')
@@ -128,109 +197,70 @@ Widget returnLobby(BuildContext context, String partyCode) {
 
         final data = snapshot.requireData;
 
-        return Container(
-          width: 500,
-          child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: snapshot.data!.docs.length < 4
-                  ? snapshot.data!.docs.length
-                  : 4,
-              itemBuilder: (context, int index) {
-                return ListTile(
-                  leading: Icon(Icons.person),
-                  trailing: Text(
-                      'Bet: \$' + data.docs[index].data()['bet'].toString()),
-                  title: Text(data.docs[index].data()['name']),
-                );
-              }),
+        return SingleChildScrollView(
+          physics: ScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          child: Container(
+            width: 500,
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, int index) {
+                  return ListTile(
+                    leading: Icon(Icons.person),
+                    trailing: Text(
+                        'Bet: \$' + data.docs[index].data()['bet'].toString()),
+                    title: Text(data.docs[index].data()['name']),
+                  );
+                }),
+          ),
         );
       }));
 }
 
-Widget checkCompleteVenmo(BuildContext context, Player player) {
-  bool betFinal = true;
-
+Widget paymentButtonToNextPage(
+    BuildContext context, String party, String name, int _price) {
   return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('users')
-          .where('partyCode', isEqualTo: player.partyCode)
+          .collection('parties')
+          .doc(party)
+          .collection('players')
+          .doc(name)
           .snapshots(),
       builder: ((context, snapshot) {
         if (snapshot.hasError) {
           return Text('Something went wrong');
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Text("Loading");
         }
-
         final data = snapshot.requireData;
-
-        for (var doc in data.docs) {
-          if (doc.data()['bet'] == 0) {
-            betFinal = false;
-          }
-
-          if (!doc.data()['ready']) {
-            return smallButton(
-                context,
-                "In Game",
-                () => {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                title: Text('Please complete venmo request'),
-                                content: Text(
-                                    'One or more players has not completed venmo request'),
-                              ))
-                    });
-          }
+        if (!data.data()!['ready']) {
+          return TextButton(
+              onPressed: () async {
+                String uid = await getUid(party, name);
+                String docID = await makePayment(
+                  uid,
+                  _price,
+                ); //update functions does not work
+                FirebaseFirestore.instance
+                    .collection('customers')
+                    .doc(uid)
+                    .collection('checkout_sessions')
+                    .doc(docID)
+                    .snapshots()
+                    .listen((querysnapshot) {
+                  final data = querysnapshot.data()!;
+                  if (data.containsKey('sessionId') &&
+                      data.containsKey('url')) {
+                    html.window.location.href = data['url'] as String;
+                  }
+                });
+              },
+              child: Text("Make Payment"));
+        } else {
+          return Text("go to the next Page");
         }
-
-        return smallButton(context, "Finish Game",
-            () => {nextPage(context, chooseWinner(player: player))});
       }));
 }
-
-// bool lobbyExists(String partyCode) async {
-//   CollectionReference users = FirebaseFirestore.instance.collection('users');
-//   var doc = users.where('partyCode', arrayContains: partyCode);
-//   if(doc.get().)
-//   });
-// }
-
-// Widget winnerRadio(BuildContext context, String partyCode) {
-//   return StreamBuilder(
-//       stream: FirebaseFirestore.instance
-//           .collection('users')
-//           .where('partyCode', isEqualTo: partyCode)
-//           .snapshots(),
-//       builder: ((context, snapshot) {
-//         if (snapshot.hasError) {
-//           return Text('Something went wrong');
-//         }
-
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Text("Loading");
-//         }
-
-//         final data = snapshot.requireData;
-
-//         return SizedBox(
-//           width: 500,
-//           child: ListView.builder(
-//               itemCount: snapshot.data!.docs.length,
-//               itemBuilder: (context, int index) {
-//                 String _winnerName = data.docs[0].data()['name'];
-
-//                 return RadioListTile(
-//                     value: data.docs[index].data()['name'],
-//                     groupValue: _winnerName,
-//                     onChanged: (value) => {
-//                       _winnerName = value
-//                     });
-//               }),
-//         );
-//       }));
-// }

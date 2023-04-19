@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:web/betAmt.dart';
-import 'package:web/models/playerInfo.dart';
 import 'package:web/models/UIelements.dart';
-import 'package:web/startupFiles/venmo.dart';
-import 'package:web/utils/functions.dart';
 import 'package:web/utils/firebase.dart';
+import 'package:web/globals.dart' as globals;
 
 class namePage extends StatelessWidget {
-  final String partyCode;
-  const namePage({Key? key, required this.partyCode}) : super(key: key);
+  const namePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Player p = Player(name: "name", venmo: "venmo", partyCode: partyCode);
     TextEditingController playerName = TextEditingController();
 
     return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(title: Text("Party: " + partyCode)),
+        appBar: AppBar(title: Text("Party: " + globals.player.partyCode)),
         body: theContainer(
             context,
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -39,9 +34,12 @@ class namePage extends StatelessWidget {
                           }
                         else
                           {
-                            p.name = playerName.text,
-                            addUser(p, partyCode),
-                            nextPage(context, betLobby(partyCode: partyCode))
+                            globals.player.name = playerName.text,
+                            addUser(globals.player),
+                            Navigator.pushNamed(context,
+                                '/lobby/${globals.player.partyCode}_${globals.player.name}',
+                                arguments:
+                                    '${globals.player.partyCode}_${globals.player.name}')
                           }
                       })
             ])));

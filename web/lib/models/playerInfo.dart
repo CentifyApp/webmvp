@@ -1,21 +1,19 @@
-import 'package:http/http.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 class Player {
   Player(
-      {required this.name,
-      required this.venmo,
+      {this.name = "",
+      this.venmo = "",
       this.ready = false,
       this.isWinner = false,
       this.bet = 0,
-      this.partyCode = ""});
+      this.partyCode = "",
+      this.useruid = ""});
 
   String name;
   String venmo;
   String partyCode;
   bool ready, isWinner;
   num bet;
-  String useruid = "";
+  String useruid;
 
   Map<String, dynamic> toJSON() {
     return {
@@ -24,7 +22,17 @@ class Player {
       "ready": ready,
       "isWinner": isWinner,
       "bet": bet,
-      "partyCode": partyCode
+      "partyCode": partyCode,
+      "useruid": useruid
     };
   }
+
+  Player.fromJSON(Map<String, dynamic> json)
+      : name = json["name"],
+        venmo = json["venmo"],
+        ready = json["ready"],
+        isWinner = json["isWinner"],
+        bet = json["bet"],
+        partyCode = json["partyCode"],
+        useruid = json["useruid"];
 }

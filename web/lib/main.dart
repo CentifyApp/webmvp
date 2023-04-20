@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:web/firebase_options.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:web/inGame.dart';
 import 'package:web/models/UIelements.dart';
 import 'package:web/startupFiles/name.dart';
 import 'package:web/utils/functions.dart';
@@ -10,8 +9,6 @@ import 'package:web/utils/firebase.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:web/error.dart';
-import 'package:firebase_auth_web/firebase_auth_web.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:web/models/playerInfo.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show json;
@@ -48,15 +45,19 @@ class MyApp extends StatelessWidget {
         }
         var uri = Uri.parse(settings.name!);
         if (uri.pathSegments.length == 2 && uri.pathSegments.first == 'lobby') {
-          print('working');
           var arg = uri.pathSegments[1];
           // var id = arg.split('_')[0];
           // var name = arg.split('_')[1];
-
           return MaterialPageRoute(
               settings: settings,
               builder: (context) => betLobby(
                   arg: arg)); //lets try if globals keeps value after refresh
+        }
+        if (uri.pathSegments.length == 2 &&
+            uri.pathSegments.first == 'inGame') {
+          var arg = uri.pathSegments[1];
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => inGame(arg: arg));
         }
         return MaterialPageRoute(
             settings: settings, builder: (context) => UnknownScreen());
@@ -78,18 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   Player p = globals.player;
   User? user;
-  String _contactText = '';
   var partyCode = "";
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // GoogleAuthProvider googleProvider = GoogleAuthProvider();
-  //   // googleProvider
-  //   //     .addScope('https://www.googleapis.com/auth/contacts.readonly');
-  //   // googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
-  //   // _googleSignIn.signInSilently();
-  // }
 
   Future<UserCredential> signInWithGoogle() async {
     GoogleAuthProvider googleProvider = GoogleAuthProvider();

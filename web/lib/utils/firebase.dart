@@ -141,6 +141,23 @@ Future<void> setGlobalPlayer(String partyCode, String name) async {
   });
 }
 
+Future<Player> getPlayer(String partyCode, String name) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  Player p = Player();
+  await db
+      .collection('parties')
+      .doc(partyCode)
+      .collection('players')
+      .doc(name)
+      .get()
+      .then((DocumentSnapshot docsnap) {
+    if (docsnap.exists) {
+      p = Player.fromJSON(docsnap.data() as Map<String, dynamic>);
+    }
+  });
+  return p;
+}
+
 Future<void> deletePayment(String partyCode, String name) async {
   String uid = await getUid(partyCode, name);
   await FirebaseFirestore.instance
@@ -260,7 +277,12 @@ Widget paymentButtonToNextPage(
               },
               child: Text("Make Payment"));
         } else {
-          return Text("go to the next Page");
+          return TextButton(
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/inGame/${party}_${name}',
+                    arguments: '${party}_${name}');
+              },
+              child: Text("Start Game"));
         }
       }));
 }

@@ -3,27 +3,27 @@ library globals;
 import 'package:web/models/playerInfo.dart';
 
 Map<int, String> prices = {
-  5: "price_1MiyGVFrHOOVbovuASQJ145q",
-  10: "price_1MousnFrHOOVbovuMrFXtgxO",
-  15: "price_1MweVoFrHOOVbovuPXx3Dufg",
-  20: "price_1MweVxFrHOOVbovuijuvKqXZ",
-  3: "price_1MweW5FrHOOVbovu98RUfpJt",
-  2: "price_1MxF8iFrHOOVbovublSB2duo",
-  4: "price_1MxF93FrHOOVbovuJEjfFw83",
-  6: "price_1MxF9LFrHOOVbovu10u7FEfi",
-  7: "price_1MxFBDFrHOOVbovuy5uPACM7",
-  8: "price_1MxFBUFrHOOVbovugRkaw4mT",
-  9: "price_1MxFBdFrHOOVbovu2HHjNetj",
-  1: "price_1MxFC9FrHOOVbovujy4pyX0J",
-  25: "price_1MxFDLFrHOOVbovuVYMl6eWh",
-  30: "price_1MxFDTFrHOOVbovutm0pSOEg",
-  40: "price_1MxFDcFrHOOVbovupSGDl9Ad",
-  50: "price_1MxFDnFrHOOVbovubUhy7u9M",
-  60: "price_1MxFDxFrHOOVbovu2m8BSdev",
-  70: "price_1MxFE8FrHOOVbovuwArvawVR",
-  80: "price_1MxFEHFrHOOVbovu790HIUDm",
-  90: "price_1MxFEQFrHOOVbovuM84dFdgs",
-  100: "price_1MxFEZFrHOOVbovui8Qbw9Mg"
+  5: "price_1N3rUpFrHOOVbovuWKGMP0VQ",
+  10: "price_1N3rUpFrHOOVbovudBfpjJaN",
+  15: "price_1N3rUpFrHOOVbovuXJ0ktv3J",
+  20: "price_1N3rUpFrHOOVbovu8gpfZgrk",
+  3: "price_1N3rUpFrHOOVbovuCa711ucJ",
+  2: "price_1N3rUpFrHOOVbovuaq0VgLwg",
+  4: "price_1N3rUpFrHOOVbovuoOO3A0Wj",
+  6: "price_1N3rUpFrHOOVbovuI4PJqdhA",
+  7: "price_1N3rUpFrHOOVbovuPZkjrvzM",
+  8: "price_1N3rUpFrHOOVbovuh7LR4ZRP",
+  9: "price_1N3rUpFrHOOVbovuWydniKPK",
+  1: "price_1N3rUpFrHOOVbovuENQZNYF2",
+  25: "price_1N3rUpFrHOOVbovumQPcNlrK",
+  30: "price_1N3rUpFrHOOVbovuylZ0kEAf",
+  40: "price_1N3rUpFrHOOVbovucenMu4KH",
+  50: "price_1N3rUpFrHOOVbovuF8NesrR6",
+  60: "price_1N3rUpFrHOOVbovu17kmdUuh",
+  70: "price_1N3rUpFrHOOVbovufxtk86Fy",
+  80: "price_1N3rUpFrHOOVbovuHVUzFMXF",
+  90: "price_1N3rUpFrHOOVbovu96885ksa",
+  100: "price_1N3rUpFrHOOVbovuwIZ6gm3m"
 };
 
 List<int> priceList = [

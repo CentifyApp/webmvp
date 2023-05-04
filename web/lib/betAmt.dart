@@ -1,10 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:web/models/UIelements.dart';
-import 'package:web/models/playerInfo.dart';
 import 'package:web/utils/firebase.dart';
 import 'package:web/globals.dart' as globals;
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'dart:html' as html;
 
 class betLobby extends StatefulWidget {
@@ -38,13 +37,19 @@ class betLobbyState extends State<betLobby> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-            title: Text.rich(TextSpan(children: [
+            title: SelectableText.rich(TextSpan(children: [
           WidgetSpan(
             child: Icon(Icons.ios_share),
           ),
           TextSpan(
               text:
-                  "     Bet on this match with me at Centify.Games! Code: ${party}"),
+                  "     Bet on this match with me at Centify.Games! Code: ${party}",
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  Clipboard.setData(ClipboardData(
+                      text:
+                          "Bet on this match with me at Centify.Games! Code: ${party}"));
+                }),
         ]))),
         body: theContainer(
             context,

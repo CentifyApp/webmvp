@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:web/choosewinner.dart';
 import 'package:web/firebase_options.dart';
 import 'package:web/inGame.dart';
 import 'package:web/models/UIelements.dart';
@@ -46,8 +47,6 @@ class MyApp extends StatelessWidget {
         var uri = Uri.parse(settings.name!);
         if (uri.pathSegments.length == 2 && uri.pathSegments.first == 'lobby') {
           var arg = uri.pathSegments[1];
-          // var id = arg.split('_')[0];
-          // var name = arg.split('_')[1];
           return MaterialPageRoute(
               settings: settings,
               builder: (context) => betLobby(
@@ -59,6 +58,13 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(
               settings: settings, builder: (context) => inGame(arg: arg));
         }
+        if (uri.pathSegments.length == 2 &&
+            uri.pathSegments.first == 'choose_winner') {
+          var arg = uri.pathSegments[1];
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => chooseWinner(arg: arg));
+        }
+
         return MaterialPageRoute(
             settings: settings, builder: (context) => UnknownScreen());
       },

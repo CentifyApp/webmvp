@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'dart:html';
-import 'package:web/choosewinner.dart';
-import 'package:web/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:web/models/UIelements.dart';
 import 'package:web/models/playerInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,14 +10,6 @@ import 'package:web/globals.dart' as globals;
 import 'dart:html' as html;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
-
-// Widget launchCheckout(String uid){
-//   FirebaseFirestore db = FirebaseFirestore.instance;
-//   return StreamBuilder(stream: db
-//       .collection('customers')
-//       .doc(uid) //hardcoded for now, need to get uid
-//       .collection("checkout_sessions"),)
-// }
 
 Future<String> makePayment(String uid, int betAmt) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -32,9 +21,9 @@ Future<String> makePayment(String uid, int betAmt) async {
     "mode": "payment",
     "price": globals.prices[betAmt],
     "success_url":
-        "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}",
+        "http://centify.games/#/lobby/${globals.player.partyCode}_${globals.player.name}",
     "cancel_url":
-        "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}" // One-time price created in Stripe // figure out pop up tab for payment,
+        "http://centify.games/#/lobby/${globals.player.partyCode}_${globals.player.name}" // One-time price created in Stripe // figure out pop up tab for payment,
   });
   return docRef.id;
 }
@@ -63,6 +52,22 @@ void setBetAmt(String betAmount, String partyCode) {
   CollectionReference lobbies =
       FirebaseFirestore.instance.collection("parties");
   lobbies.doc(partyCode).update({"betAmount": betnum});
+}
+
+void setPlayerWin(String partyCode, String name, bool win) {
+  CollectionReference lobbies =
+      FirebaseFirestore.instance.collection("parties");
+  lobbies
+      .doc(partyCode)
+      .collection('players')
+      .doc(name)
+      .update({"isWinner": win});
+}
+
+void setPartyWinner(String partyCode, String name) {
+  CollectionReference lobbies =
+      FirebaseFirestore.instance.collection("parties");
+  lobbies.doc(partyCode).update({"winner": name});
 }
 
 void removePlayer(Player p) {

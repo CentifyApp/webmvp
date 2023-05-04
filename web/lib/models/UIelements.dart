@@ -65,7 +65,7 @@ ThemeData themeData() {
       primarySwatch: Colors.purple,
       textTheme: GoogleFonts.poppinsTextTheme(TextTheme(
           bodySmall: TextStyle(fontSize: 20, color: Colors.white),
-          bodyMedium: TextStyle(fontSize: 24),
+          bodyMedium: TextStyle(fontSize: 20),
           bodyLarge: TextStyle(fontSize: 28, color: Colors.white))),
       scaffoldBackgroundColor: Color.fromARGB(255, 248, 187, 249));
 }

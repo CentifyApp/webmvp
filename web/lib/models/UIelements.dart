@@ -33,7 +33,7 @@ Widget smallButton(BuildContext context, String text, Function()? onPress) {
 Widget bigIconButton(
     BuildContext context, String text, Icon icon, Function()? onPress) {
   return SizedBox(
-    width: 300,
+    width: 250,
     height: 50,
     child: ElevatedButton.icon(
       onPressed: onPress,
@@ -45,7 +45,7 @@ Widget bigIconButton(
 
 Widget formFieldText(String label, TextEditingController controller) {
   return SizedBox(
-      width: 500,
+      width: 300,
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
@@ -62,23 +62,26 @@ Widget formFieldText(String label, TextEditingController controller) {
 
 ThemeData themeData() {
   return ThemeData(
-      primarySwatch: Colors.purple,
+      colorScheme:
+          ColorScheme.fromSwatch().copyWith(primary: Color(0xfff96c85)),
       textTheme: GoogleFonts.poppinsTextTheme(TextTheme(
-          bodySmall: TextStyle(fontSize: 20, color: Colors.white),
-          bodyMedium: TextStyle(fontSize: 20),
-          bodyLarge: TextStyle(fontSize: 28, color: Colors.white))),
-      scaffoldBackgroundColor: Color.fromARGB(255, 248, 187, 249));
+        bodySmall: TextStyle(fontSize: 18, color: Color(0xff303030)),
+        bodyMedium: TextStyle(fontSize: 28, color: Color(0xff303030)),
+        displayMedium: TextStyle(fontSize: 22, color: Color(0xff303030)),
+        bodyLarge: TextStyle(
+            fontSize: 40,
+            color: Color(0xfff96c85),
+            fontWeight: FontWeight.bold),
+      )));
 }
 
-Container theContainer(BuildContext context, Widget child) {
+Widget theContainer(BuildContext context, Widget child) {
   return Container(
     alignment: Alignment.center,
     padding: EdgeInsets.all(50),
     height: MediaQuery.of(context).size.height,
     width: MediaQuery.of(context).size.width,
-    decoration: BoxDecoration(
-        gradient:
-            LinearGradient(colors: [Colors.orangeAccent, Colors.purpleAccent])),
+    decoration: BoxDecoration(color: const Color(0xFFEAF2FF)),
     child: child,
   );
 }

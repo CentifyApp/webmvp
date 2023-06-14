@@ -48,10 +48,10 @@ dependencies:
   google_sign_in: ^6.0.1
   flutter_stripe: ^8.0.0+1
   flutter_stripe_web: ^3.0.0
-  flutter_dotenv: ^5.0.2
   google_sign_in_web: ^0.11.0+2
   firebase_auth_web: ^5.2.10
   url_launcher: ^6.1.10
+  flutter_signin_button: ^2.0.0
 
 
 dev_dependencies:
@@ -75,13 +75,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets:
-    - assets/venmo.jpg
-    - assets/.env
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/centify1.jpg
+    - assets/centify2.jpg
+    - assets/centify3.jpg
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

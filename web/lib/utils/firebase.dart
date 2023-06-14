@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:web/models/UIelements.dart';
 import 'package:web/models/playerInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,10 +22,22 @@ Future<String> makePayment(String uid, int betAmt) async {
     "mode": "payment",
     "price": globals.prices[betAmt],
     "success_url":
-        "http://centify.games/#/lobby/${globals.player.partyCode}_${globals.player.name}",
+        "http://centifygames-f547e.web.app/#/lobby/${globals.player.partyCode}_${globals.player.name}",
     "cancel_url":
-        "http://centify.games/#/lobby/${globals.player.partyCode}_${globals.player.name}" // One-time price created in Stripe // figure out pop up tab for payment,
+        "https://centifygames-f547e.web.app/#/lobby/${globals.player.partyCode}_${globals.player.name}"
   });
+  // DocumentReference docRef = await db //for testing
+  //     .collection('customers')
+  //     .doc(uid)
+  //     .collection("checkout_sessions")
+  //     .add({
+  //   "mode": "payment",
+  //   "price": globals.prices[betAmt],
+  //   "success_url":
+  //       "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}",
+  //   "cancel_url":
+  //       "http://localhost:5000/#/lobby/${globals.player.partyCode}_${globals.player.name}"
+  // });
   return docRef.id;
 }
 
@@ -81,7 +94,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
       '270397286111-ubpfahhaoctnaieo2eehdf3ragm9qf64.apps.googleusercontent.com',
   scopes: <String>[
     'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
+    'https://www.googleapis.com/auth/userinfo.email',
   ],
 );
 
@@ -163,6 +176,20 @@ Future<Player> getPlayer(String partyCode, String name) async {
   return p;
 }
 
+Future<bool> checkPartyValid(String partyCode) async {
+  DocumentReference docRef =
+      FirebaseFirestore.instance.collection('parties').doc(partyCode);
+  bool exist = false;
+  await docRef.get().then((doc) => exist = doc.exists);
+  int count = 0;
+  await docRef
+      .collection('players')
+      .count()
+      .get()
+      .then((value) => count = value.count);
+  return exist && count < 3; // remove count condition for non 1v1s
+}
+
 Future<void> deletePayment(String partyCode, String name) async {
   String uid = await getUid(partyCode, name);
   await FirebaseFirestore.instance
@@ -220,24 +247,26 @@ Future<Widget> returnLobby(
         final data = snapshot.requireData;
 
         return SingleChildScrollView(
-          physics: ScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          child: Container(
-            width: 500,
-            child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, int index) {
-                  return ListTile(
-                    leading: Icon(Icons.person),
-                    trailing: Text(
-                        'Bet: \$' + data.docs[index].data()['bet'].toString()),
-                    title: Text(data.docs[index].data()['name']),
-                  );
-                }),
-          ),
-        );
+            physics: ScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            child: Container(
+              width: 500,
+              child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, int index) {
+                    return ListTile(
+                      leading: Icon(Icons.person),
+                      trailing: Text(
+                        'Bet: \$' + data.docs[index].data()['bet'].toString(),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      title: Text(data.docs[index].data()['name'],
+                          style: Theme.of(context).textTheme.bodySmall),
+                    );
+                  }),
+            ));
       }));
 }
 
@@ -255,11 +284,13 @@ Widget paymentButtonToNextPage(
           return Text('Something went wrong');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
+          return CircularProgressIndicator();
         }
         final data = snapshot.requireData;
-        if (!data.data()!['ready']) {
-          return TextButton(
+        print(data.data());
+        print(data.data()!['ready']);
+        if (!data.data()!['ready'] ?? true) {
+          return ElevatedButton(
               onPressed: () async {
                 String uid = await getUid(party, name);
                 String docID = await makePayment(
@@ -280,14 +311,28 @@ Widget paymentButtonToNextPage(
                   }
                 });
               },
-              child: Text("Make Payment"));
+              child: const FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                    children: [
+                      Text("Make Payment",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
+                    ],
+                  )));
         } else {
-          return TextButton(
+          return ElevatedButton(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/inGame/${party}_${name}',
                     arguments: '${party}_${name}');
               },
-              child: Text("Start Game"));
+              child: const FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                    children: [
+                      Text("Start Game",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
+                    ],
+                  )));
         }
       }));
 }

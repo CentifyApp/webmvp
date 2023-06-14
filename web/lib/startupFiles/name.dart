@@ -18,30 +18,42 @@ class namePage extends StatelessWidget {
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               Text("Player name?"),
               formFieldText("Name", playerName),
-              smallButton(
-                  context,
-                  "Join",
-                  () => {
-                        print(playerName.text),
-                        if (playerName.text == null || playerName.text.isEmpty)
-                          {
-                            showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                      title: Text('Please complete field'),
-                                      content: Text('Name is not complete'),
-                                    ))
-                          }
-                        else
-                          {
-                            globals.player.name = playerName.text,
-                            addUser(globals.player),
-                            Navigator.pushNamed(context,
-                                '/lobby/${globals.player.partyCode}_${globals.player.name}',
-                                arguments:
-                                    '${globals.player.partyCode}_${globals.player.name}')
-                          }
-                      })
+              SizedBox(
+                width: 100,
+                height: 33,
+                child: ElevatedButton(
+                    onPressed: () => {
+                          print(playerName.text),
+                          if (playerName.text == null ||
+                              playerName.text.isEmpty)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => const AlertDialog(
+                                        title: Text('Please complete field'),
+                                        content: Text('Name is not complete'),
+                                      ))
+                            }
+                          else
+                            {
+                              globals.player.name = playerName.text,
+                              addUser(globals.player),
+                              Navigator.pushNamed(context,
+                                  '/lobby/${globals.player.partyCode}_${globals.player.name}',
+                                  arguments:
+                                      '${globals.player.partyCode}_${globals.player.name}')
+                            }
+                        },
+                    child: const FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Row(
+                          children: [
+                            Text("Join",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                          ],
+                        ))),
+              )
             ])));
   }
 }

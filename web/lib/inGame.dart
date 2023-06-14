@@ -26,13 +26,11 @@ class inGameState extends State<inGame> {
           child: Icon(Icons.ios_share),
         ),
         TextSpan(
-            text:
-                "     Bet on this match with me at Centify.Games! Code: ${party}",
+            text: "     Bet on this game at Centify.Games! Code: ${party}",
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
                 Clipboard.setData(ClipboardData(
-                    text:
-                        "Bet on this match with me at Centify.Games! Code: ${party}"));
+                    text: "Bet on this game at Centify.Games! Code: ${party}"));
               }),
       ]))),
       body: theContainer(
@@ -42,11 +40,18 @@ class inGameState extends State<inGame> {
             children: [
               Text("Game in progress..."),
               CircularProgressIndicator(),
-              smallButton(
-                  context,
-                  "End?",
-                  () => Navigator.pushNamed(
-                      context, 'choose_winner/${widget.arg}'))
+              ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(
+                      context, 'choose_winner/${widget.arg}'),
+                  child: const FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Row(
+                        children: [
+                          Text("Game ended?",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
+                        ],
+                      ))),
             ],
           )),
     );

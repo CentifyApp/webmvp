@@ -36,30 +36,48 @@ class chooseWinnerState extends State<chooseWinner> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    smallButton(
-                        context,
-                        "Yes",
-                        () => setState(() {
+                    ElevatedButton(
+                        onPressed: () => setState(() {
                               _offStage = 1;
-                            })),
-                    smallButton(
-                        context,
-                        "No",
-                        () => setState(() {
+                            }),
+                        child: const FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Row(
+                              children: [
+                                Text("Yes",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ],
+                            ))),
+                    ElevatedButton(
+                        onPressed: () => setState(() {
                               _offStage = 2;
-                            }))
+                            }),
+                        child: const FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Row(
+                              children: [
+                                Text("No",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ],
+                            )))
                   ],
                 ),
                 if (_offStage == 1)
-                  Column(
+                  Column(children: [
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            "Text 415-769-8863 the following with your venmo handle:"),
+                            "Complete Venmo handle (click to copy) and submit to sidequest.bet@gmail.com",
+                            style: Theme.of(context).textTheme.bodySmall),
                         SelectableText.rich(
                           TextSpan(
                               text:
                                   "Name: ${name} \nParty: ${partyCode} \nVenmo: ",
+                              style: Theme.of(context).textTheme.bodySmall,
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () async {
                                   Clipboard.setData(ClipboardData(
@@ -67,27 +85,65 @@ class chooseWinnerState extends State<chooseWinner> {
                                           "Name: ${name} \nParty: ${partyCode} \nVenmo: "));
                                 }),
                         ),
-                        Text("Please also attach a photo for proof."),
+                        Text(
+                            "Please also attach a photo for proof and allow 1 day to process.",
+                            style: Theme.of(context).textTheme.bodySmall),
                         SizedBox(height: 20),
                         Text(
-                            "Please feel free to let me know any feedback you have!"),
-                        smallButton(context, "Play Again", () {
-                          globals.player = new Player();
-                          Navigator.pushNamed(context, '/');
-                        })
-                      ]),
-                if (_offStage == 2)
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            "Please let us know any feedbacks or requests at sidequest.bet@gmail.com",
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                    Column(
                       children: [
-                        Text("Better luck next time!"),
-                        Text(
-                            "Please feel free to let me know any feedback you have, just text 415-769-8863!"),
-                        smallButton(context, "Play Again", () {
-                          globals.player = new Player();
-                          Navigator.pushNamed(context, '/');
-                        })
-                      ]),
+                        ElevatedButton(
+                            onPressed: () {
+                              globals.player = new Player();
+                              Navigator.pushNamed(context, '/');
+                            },
+                            child: const FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Row(
+                                  children: [
+                                    Text("Play Again",
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white)),
+                                  ],
+                                )))
+                      ],
+                    )
+                  ]),
+                if (_offStage == 2)
+                  Column(children: [
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Better luck next time!",
+                              style: Theme.of(context).textTheme.bodySmall),
+                          Text(
+                              "Please let us know any requests or feedbacks at sidequest.bet@gmail.com",
+                              style: Theme.of(context).textTheme.bodySmall),
+                        ]),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              globals.player = new Player();
+                              Navigator.pushNamed(context, '/');
+                            },
+                            child: const FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Row(
+                                  children: [
+                                    Text("Play Again",
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white)),
+                                  ],
+                                )))
+                      ],
+                    )
+                  ])
               ],
             )));
   }

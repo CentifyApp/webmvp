@@ -17,7 +17,7 @@ class betLobby extends StatefulWidget {
   }
 }
 
-int _priceIndex = 2;
+int _priceIndex = 9;
 int _price = globals.priceList[_priceIndex];
 
 class betLobbyState extends State<betLobby> {
@@ -42,12 +42,12 @@ class betLobbyState extends State<betLobby> {
             child: Icon(Icons.ios_share),
           ),
           TextSpan(
-              text: "     Bet on this game at Centify.Games! Code: ${party}",
+              text: "     Join this wager at Sidequest.bet! Code: ${party}",
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
                   Clipboard.setData(ClipboardData(
                       text:
-                          "Bet on this game at Centify.Games! Code: ${party}"));
+                          "Join this wager at Sidequest.bet! Code: ${party}"));
                 }),
         ]))),
         body: Container(

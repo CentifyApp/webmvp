@@ -4,6 +4,7 @@ import 'package:web/models/playerInfo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'globals.dart' as globals;
+import 'dart:html' as html;
 
 class chooseWinner extends StatefulWidget {
   final String arg;
@@ -39,6 +40,8 @@ class chooseWinnerState extends State<chooseWinner> {
                     ElevatedButton(
                         onPressed: () => setState(() {
                               _offStage = 1;
+                              html.window.location.href =
+                                  "https://forms.gle/kaH64cWVvxQ5gEw4A";
                             }),
                         child: const FittedBox(
                             fit: BoxFit.fitWidth,
@@ -64,86 +67,117 @@ class chooseWinnerState extends State<chooseWinner> {
                             )))
                   ],
                 ),
-                if (_offStage == 1)
-                  Column(children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "Complete Venmo handle (click to copy) and submit to sidequest.bet@gmail.com",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        SelectableText.rich(
-                          TextSpan(
-                              text:
-                                  "Name: ${name} \nParty: ${partyCode} \nVenmo: ",
-                              style: Theme.of(context).textTheme.bodySmall,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  Clipboard.setData(ClipboardData(
-                                      text:
-                                          "Name: ${name} \nParty: ${partyCode} \nVenmo: "));
-                                }),
-                        ),
-                        Text(
-                            "Please also attach a photo for proof and allow 1 day to process.",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        SizedBox(height: 20),
-                        Text(
-                            "Please let us know any feedbacks or requests at sidequest.bet@gmail.com",
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              globals.player = new Player();
-                              Navigator.pushNamed(context, '/');
-                            },
-                            child: const FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Row(
-                                  children: [
-                                    Text("Play Again",
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.white)),
-                                  ],
-                                )))
-                      ],
-                    )
-                  ]),
-                if (_offStage == 2)
-                  Column(children: [
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Better luck next time!",
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                              "Please let us know any requests or feedbacks at sidequest.bet@gmail.com",
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ]),
-                    Column(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              globals.player = new Player();
-                              Navigator.pushNamed(context, '/');
-                            },
-                            child: const FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Row(
-                                  children: [
-                                    Text("Play Again",
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.white)),
-                                  ],
-                                )))
-                      ],
-                    )
-                  ])
+                if (_offStage == 1 || _offStage == 2)
+                  Column(
+                    children: [
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "Please complete the form to earn your winnings!",
+                                style: Theme.of(context).textTheme.bodySmall),
+                            Text(
+                                "Email support at sidequest.bet@gmail.com if you have any questions. We will try our best to help you.",
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ]),
+                      ElevatedButton(
+                          onPressed: () {
+                            globals.player = new Player();
+                            Navigator.pushNamed(context, '/');
+                          },
+                          child: const FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Row(
+                                children: [
+                                  Text("Play Again",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white)),
+                                ],
+                              )))
+                    ],
+                  )
+
+                // if (_offStage == 1)
+                //   Column(children: [
+                //     Column(
+                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text(
+                //             "Complete Venmo handle (click to copy) and submit to sidequest.bet@gmail.com",
+                //             style: Theme.of(context).textTheme.bodySmall),
+                //         SelectableText.rich(
+                //           TextSpan(
+                //               text:
+                //                   "Name: ${name} \nParty: ${partyCode} \nVenmo: ",
+                //               style: Theme.of(context).textTheme.bodySmall,
+                //               recognizer: TapGestureRecognizer()
+                //                 ..onTap = () async {
+                //                   Clipboard.setData(ClipboardData(
+                //                       text:
+                //                           "Name: ${name} \nParty: ${partyCode} \nVenmo: "));
+                //                 }),
+                //         ),
+                //         Text(
+                //             "Please also attach a photo for proof and allow 1 day to process.",
+                //             style: Theme.of(context).textTheme.bodySmall),
+                //         SizedBox(height: 20),
+                //         Text(
+                //             "Please let us know any feedbacks or requests at sidequest.bet@gmail.com",
+                //             style: Theme.of(context).textTheme.bodySmall),
+                //       ],
+                //     ),
+                //     Column(
+                //       children: [
+                //         ElevatedButton(
+                //             onPressed: () {
+                //               globals.player = new Player();
+                //               Navigator.pushNamed(context, '/');
+                //             },
+                //             child: const FittedBox(
+                //                 fit: BoxFit.fitWidth,
+                //                 child: Row(
+                //                   children: [
+                //                     Text("Play Again",
+                //                         style: TextStyle(
+                //                             fontSize: 18, color: Colors.white)),
+                //                   ],
+                //                 )))
+                //       ],
+                //     )
+                //   ]),
+                // if (_offStage == 2)
+                //   Column(children: [
+                //     Column(
+                //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text("Better luck next time!",
+                //               style: Theme.of(context).textTheme.bodySmall),
+                //           Text(
+                //               "Please let us know any requests or feedbacks at sidequest.bet@gmail.com",
+                //               style: Theme.of(context).textTheme.bodySmall),
+                //         ]),
+                //     Column(
+                //       children: [
+                //         ElevatedButton(
+                //             onPressed: () {
+                //               globals.player = new Player();
+                //               Navigator.pushNamed(context, '/');
+                //             },
+                //             child: const FittedBox(
+                //                 fit: BoxFit.fitWidth,
+                //                 child: Row(
+                //                   children: [
+                //                     Text("Play Again",
+                //                         style: TextStyle(
+                //                             fontSize: 18, color: Colors.white)),
+                //                   ],
+                //                 )))
+                //       ],
+                //     )
+                //   ])
               ],
             )));
   }
